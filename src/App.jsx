@@ -5,6 +5,7 @@ import "./App.scss";
 import AppBar from "@/components/AppBar/Appbar";
 import BoardBar from "@/components/BoardBar/BoardBar";
 import BoardContent from "@/components/BoardContent/BoardContent";
+import ScrollContainer from "react-indiana-drag-scroll";
 
 function App() {
   return (
