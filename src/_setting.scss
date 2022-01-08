@@ -3,6 +3,11 @@ $gap: 10px;
 $navbar-app-height: 4vh;
 $navbar-board-height: 5vh;
 $board-content-height: 90vh;
+$column-border-radius: 5px;
+
+// colors
+$app-main-text-color: #333;
+$alert-danger: #eb3b5a;
 
 // Screen
 $screen-lg: 1201px;
@@ -14,3 +19,4 @@ $screen-ip6-down: "(max-width:375px)";
 // Bg-colo
 $board-bg-color: #0079bf;
 $horizontal-scroll-bar-bg: rgba(255, 255, 255, 0.2);
+$column-bg-color: #ebecf0;

@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Container, Draggable } from "react-smooth-dnd";
 import Column from "@/components/Column/Column";
 import { initialData } from "@/actions/initialData";
+import { applyDrag } from "@/utils/dragDrop";
 import { mapOrder } from "@/utils/sorts";
 import "./BoardContent.scss";
 
@@ -12,8 +13,12 @@ import "./BoardContent.scss";
 function BoardContent() {
   const [board, setBoard] = useState({});
   const [columns, setColumns] = useState([]);
+  const [isToggleOpenNewColumn, setIsToggleOpenNewColumn] = useState(false);
+  const [newColumnTitle, setNewColumnTitle] = useState("");
+  const newColumnInputRef = useRef(null);
   // const slider = document.querySelector(".board-content");
 
+  // drag and drop
   useEffect(() => {
     const fetchBoardData = initialData.boards.find(
       (board) => board.id === "board-1"
@@ -26,6 +31,14 @@ function BoardContent() {
       mapOrder(fetchBoardData.columns, fetchBoardData.columnOrder, "id")
     );
   }, []);
+
+  // focus input ref
+  useEffect(() => {
+    if (newColumnInputRef && newColumnInputRef.current) {
+      newColumnInputRef.current.focus();
+      newColumnInputRef.current.select();
+    }
+  }, [isToggleOpenNewColumn]);
 
   if (!board) {
     return <div className="not-found">Board not found!</div>;
@@ -58,7 +71,65 @@ function BoardContent() {
   // };
 
   const onColumnDrop = (dropResult) => {
-    console.log(dropResult);
+    let newColumns = [...columns];
+    newColumns = applyDrag(newColumns, dropResult);
+
+    let newBoard = { ...board };
+
+    newBoard.columnOrder = newColumns.map((c) => c.id);
+
+    newBoard.columns = newColumns;
+
+    setColumns(newColumns);
+    setBoard(newBoard);
+  };
+
+  const onCardDrop = (columnId, dropResult) => {
+    if (dropResult.removedIndex !== null || dropResult.addedIndex !== null) {
+      let newColumns = [...columns];
+
+      let currentColumn = newColumns.find((c) => c.id === columnId);
+
+      currentColumn.cards = applyDrag(currentColumn.cards, dropResult);
+
+      currentColumn.cardOrder = currentColumn.cards.map((item) => item.id);
+
+      setColumns(newColumns);
+    }
+  };
+
+  const toggleOpenNewColumn = () => {
+    setIsToggleOpenNewColumn((prev) => !prev);
+  };
+
+  const addNewColumn = () => {
+    if (!newColumnTitle) {
+      newColumnInputRef.current.focus();
+      return;
+    }
+
+    const newColumnToAdd = {
+      id: Math.random().toString(36).substr(2, 5),
+      boardId: board.id,
+      title: newColumnTitle.trim(),
+      cardOrder: [],
+      cards: [],
+    };
+
+    let newColumns = [...columns];
+    newColumns.push(newColumnToAdd);
+
+    let newBoard = { ...board };
+
+    newBoard.columnOrder = newColumns.map((c) => c.id);
+
+    newBoard.columns = newColumns;
+
+    setColumns(newColumns);
+    setBoard(newBoard);
+
+    setNewColumnTitle("");
+    setIsToggleOpenNewColumn(false);
   };
 
   return (
@@ -82,10 +153,47 @@ function BoardContent() {
       >
         {columns?.map((column, index) => (
           <Draggable key={index}>
-            <Column {...column} />
+            <Column {...column} onCardDrop={onCardDrop} />
           </Draggable>
         ))}
       </Container>
+      <div className="add-new-column">
+        {!isToggleOpenNewColumn ? (
+          <div className="add-new-column-button" onClick={toggleOpenNewColumn}>
+            <i className="fa fa-plus icon" />
+            Add another column
+          </div>
+        ) : (
+          <div
+            className={`enter-new-column ${
+              isToggleOpenNewColumn ? "active" : "closed"
+            }`}
+          >
+            <input
+              ref={newColumnInputRef}
+              type="text"
+              placeholder="Enter column title..."
+              value={newColumnTitle}
+              onChange={(e) => setNewColumnTitle(e.target.value)}
+              onKeyDown={(event) => {
+                event.key === "Enter" && addNewColumn();
+              }}
+            />
+            <button
+              onClick={addNewColumn}
+              className="add-new-title-column-button"
+            >
+              Add Column
+            </button>
+            <span
+              className="cancel-new-column"
+              onClick={() => setIsToggleOpenNewColumn(false)}
+            >
+              <i className="fa fa-trash icon" />
+            </span>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

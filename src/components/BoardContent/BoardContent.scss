@@ -1,7 +1,7 @@
 @import "@/_setting.scss";
 
 .board-content {
-  // display: flex;
+  display: flex;
   overflow-x: auto;
   // margin: 0 $gap $gap;
   height: $board-content-height;
@@ -10,6 +10,10 @@
   // will-change: transform;
   // user-select: none;
   overflow-y: hidden;
+  &:after {
+    content: "";
+    flex: 0 0 $gap;
+  }
   &.active {
     cursor: grabbing;
     cursor: -webkit-grabbing;
@@ -30,5 +34,97 @@
     background-color: rgba(150, 150, 200, 0.1);
     border: 1px dashed #abc;
     margin: 5px 45px 5px 5px;
+  }
+
+  .add-new-column {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .add-new-column-button {
+    width: 250px;
+    flex: 0 0 auto;
+    height: 46px;
+    padding: 4px 0 4px 15px;
+    cursor: pointer;
+    color: #fff;
+    margin-left: $gap;
+    font-size: 15px;
+    background-color: hsla(0, 0%, 100%, 0.24);
+    display: flex;
+    align-items: center;
+    border-radius: $column-border-radius;
+    &:hover {
+      background-color: hsla(0, 0%, 100%, 0.34);
+    }
+  }
+
+  .enter-new-column {
+    margin-left: $gap;
+    background: rgb(216, 211, 211);
+    padding: 5px;
+    border-radius: $column-border-radius;
+    &.active {
+      animation: openModal 0.2s ease-out forwards;
+    }
+    &.closed {
+      animation: closeModal 10s ease-out forwards;
+    }
+    @keyframes openModal {
+      from {
+        transform: translateY(-80px);
+      }
+      to {
+        transform: translateY(0);
+      }
+    }
+    @keyframes closeModal {
+      from {
+        transform: translateY(0);
+      }
+      to {
+        transform: translateY(-100vh);
+      }
+    }
+    input {
+      width: 240px;
+      max-width: 240px;
+      height: 30px;
+      padding: 2px 0 2px 4px;
+      font-size: 14px;
+      border-radius: $column-border-radius;
+      border: none;
+      &:focus {
+        outline: none;
+        outline-width: 2px;
+        outline-color: #7ed6df;
+        outline-style: solid;
+      }
+    }
+    .add-new-title-column-button {
+      padding: 8px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      background-color: rgb(25, 141, 29);
+      color: #fff;
+      transition: all 0.2s ease-out;
+      margin: 5px 0 0;
+      &:hover {
+        transition: all 0.2s ease-out;
+        background-color: rgba(27, 146, 31, 0.8);
+        color: rgba(255, 255, 255, 0.8);
+      }
+    }
+    span.cancel-new-column {
+      margin-left: $gap;
+      cursor: pointer;
+      i {
+        font-size: 20px;
+        color: $alert-danger;
+        &:hover {
+          color: darken($alert-danger, 10);
+        }
+      }
+    }
   }
 }
