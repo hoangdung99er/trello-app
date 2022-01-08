@@ -9,22 +9,33 @@
     font-size: 14px;
     margin-right: 3px;
   }
+  .trello-content-editable {
+    background-color: inherit;
+    border: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    cursor: pointer;
+    &:focus {
+      outline: none;
+      border: 1px solid $border-input-color;
+    }
+  }
 }
 
 button {
-  outline: none;
-  box-shadow: none;
-  border: none;
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
 }
 
 button:focus {
-  outline: none;
-  box-shadow: none;
-  border: none;
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
 }
 
 button:active {
-  outline: none;
-  box-shadow: none;
-  border: none;
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
 }

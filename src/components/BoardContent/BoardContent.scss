@@ -39,6 +39,7 @@
   .add-new-column {
     display: flex;
     flex-direction: column;
+    max-width: 260px;
   }
 
   .add-new-column-button {
@@ -97,7 +98,7 @@
       &:focus {
         outline: none;
         outline-width: 2px;
-        outline-color: #7ed6df;
+        outline-color: $border-input-color;
         outline-style: solid;
       }
     }
