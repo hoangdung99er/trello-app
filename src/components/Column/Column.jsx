@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Draggable, Container } from "react-smooth-dnd";
 import Task from "@/components/Card/Card";
 import { mapOrder } from "@/utils/sorts";
@@ -13,10 +13,24 @@ function Column(props) {
   const cards = mapOrder(column.cards, column.cardOrder, "id");
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [columnTitle, setColumnTitle] = useState("");
+  const [cardTitle, setCardTitle] = useState("");
+  const [isToggleOpenNewCard, setIsToggleOpenNewCard] = useState(false);
+  const newCardTextareaRef = useRef(null);
+
+  const toggleOpenNewCard = () => {
+    setIsToggleOpenNewCard((prev) => !prev);
+  };
 
   useEffect(() => {
     setColumnTitle(column.title);
   }, [column.title]);
+
+  useEffect(() => {
+    if (newCardTextareaRef && newCardTextareaRef.current) {
+      newCardTextareaRef.current.focus();
+      newCardTextareaRef.current.select();
+    }
+  }, [isToggleOpenNewCard]);
 
   const toggleShowConfirmModal = () => {
     setShowConfirmModal((prev) => !prev);
@@ -40,6 +54,29 @@ function Column(props) {
       onUpdateColumn(newColumn);
     }
     toggleShowConfirmModal();
+  };
+
+  const addNewCard = () => {
+    if (!cardTitle) {
+      newCardTextareaRef.current.focus();
+      return;
+    }
+    const newCardToAdd = {
+      id: Math.random().toString(36).substr(2, 5),
+      boardId: column.boardId,
+      title: cardTitle.trim(),
+      columnId: column.id,
+      cover: null,
+    };
+
+    let newColumn = { ...column };
+    newColumn.cards.push(newCardToAdd);
+    newColumn.cardOrder.push(newCardToAdd.id);
+
+    onUpdateColumn(newColumn);
+
+    setIsToggleOpenNewCard(false);
+    setCardTitle("");
   };
 
   return (
@@ -112,12 +149,42 @@ function Column(props) {
             </Draggable>
           ))}
         </Container>
+        {isToggleOpenNewCard && (
+          <div className="add-new-card-area">
+            <textarea
+              type="text"
+              ref={newCardTextareaRef}
+              placeholder="Enter a title for this card..."
+              value={cardTitle}
+              onChange={(e) => setCardTitle(e.target.value)}
+              onKeyDown={(event) => {
+                event.key === "Enter" && addNewCard();
+              }}
+            />
+          </div>
+        )}
       </div>
+
       <footer>
-        <div className="footer-action">
-          <i className="fa fa-plus icon" />
-          Add another card
-        </div>
+        {isToggleOpenNewCard && (
+          <div className="add-new-card-action">
+            <button onClick={addNewCard} className="add-new-card-button">
+              Add Card
+            </button>
+            <span
+              className="cancel-icon"
+              onClick={() => setIsToggleOpenNewCard(false)}
+            >
+              <i className="fa fa-trash icon" />
+            </span>
+          </div>
+        )}
+        {!isToggleOpenNewCard && (
+          <div className="footer-action" onClick={toggleOpenNewCard}>
+            <i className="fa fa-plus icon" />
+            Add another card
+          </div>
+        )}
       </footer>
 
       <ConfirmModal

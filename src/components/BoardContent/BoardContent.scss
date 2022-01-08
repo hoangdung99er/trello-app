@@ -116,16 +116,5 @@
         color: rgba(255, 255, 255, 0.8);
       }
     }
-    span.cancel-new-column {
-      margin-left: $gap;
-      cursor: pointer;
-      i {
-        font-size: 20px;
-        color: $alert-danger;
-        &:hover {
-          color: darken($alert-danger, 10);
-        }
-      }
-    }
   }
 }

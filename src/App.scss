@@ -20,6 +20,18 @@
       border: 1px solid $border-input-color;
     }
   }
+
+  span.cancel-icon {
+    margin-left: $gap;
+    cursor: pointer;
+    i {
+      font-size: 20px;
+      color: $alert-danger;
+      &:hover {
+        color: darken($alert-danger, 10);
+      }
+    }
+  }
 }
 
 button {

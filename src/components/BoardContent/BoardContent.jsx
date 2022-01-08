@@ -140,13 +140,13 @@ function BoardContent() {
       (column) => column.id === columnIdToUpdate
     );
 
-    console.log(newColumnToUpdate);
-
     if (newColumnToUpdate._destroy) {
       //remove column
       newColumns.splice(columnIndexToUpdate, 1);
     } else {
       // update column
+      console.log(newColumnToUpdate);
+
       newColumns.splice(columnIndexToUpdate, 1, newColumnToUpdate);
     }
 
@@ -218,7 +218,7 @@ function BoardContent() {
               Add Column
             </button>
             <span
-              className="cancel-new-column"
+              className="cancel-icon"
               onClick={() => setIsToggleOpenNewColumn(false)}
             >
               <i className="fa fa-trash icon" />
