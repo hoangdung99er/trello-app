@@ -3,6 +3,7 @@ import { Container, Draggable } from "react-smooth-dnd";
 import Column from "@/components/Column/Column";
 import { initialData } from "@/actions/initialData";
 import { applyDrag } from "@/utils/dragDrop";
+import { fetchBoardDetails } from "@/actions/ApiCall";
 import { mapOrder } from "@/utils/sorts";
 import "./BoardContent.scss";
 
@@ -20,16 +21,12 @@ function BoardContent() {
 
   // drag and drop
   useEffect(() => {
-    const fetchBoardData = initialData.boards.find(
-      (board) => board.id === "board-1"
-    );
-    if (fetchBoardData) setBoard(fetchBoardData);
-
-    //sort column
-
-    setColumns(
-      mapOrder(fetchBoardData.columns, fetchBoardData.columnOrder, "id")
-    );
+    fetchBoardDetails("61daa9d6c3b7284674a49b5c")
+      .then((board) => {
+        setBoard(board);
+        setColumns(mapOrder(board.columns, board.columnOrder, "_id"));
+      })
+      .catch((err) => console.log(err));
   }, []);
 
   // focus input ref
@@ -76,7 +73,7 @@ function BoardContent() {
 
     let newBoard = { ...board };
 
-    newBoard.columnOrder = newColumns.map((c) => c.id);
+    newBoard.columnOrder = newColumns.map((c) => c._id);
 
     newBoard.columns = newColumns;
 
@@ -88,11 +85,11 @@ function BoardContent() {
     if (dropResult.removedIndex !== null || dropResult.addedIndex !== null) {
       let newColumns = [...columns];
 
-      let currentColumn = newColumns.find((c) => c.id === columnId);
+      let currentColumn = newColumns.find((c) => c._id === columnId);
 
       currentColumn.cards = applyDrag(currentColumn.cards, dropResult);
 
-      currentColumn.cardOrder = currentColumn.cards.map((item) => item.id);
+      currentColumn.cardOrder = currentColumn.cards.map((item) => item._id);
 
       setColumns(newColumns);
     }
@@ -110,7 +107,7 @@ function BoardContent() {
 
     const newColumnToAdd = {
       id: Math.random().toString(36).substr(2, 5),
-      boardId: board.id,
+      boardId: board._id,
       title: newColumnTitle.trim(),
       cardOrder: [],
       cards: [],
@@ -121,7 +118,7 @@ function BoardContent() {
 
     let newBoard = { ...board };
 
-    newBoard.columnOrder = newColumns.map((c) => c.id);
+    newBoard.columnOrder = newColumns.map((c) => c._id);
 
     newBoard.columns = newColumns;
 
@@ -133,11 +130,11 @@ function BoardContent() {
   };
 
   const onUpdateColumn = (newColumnToUpdate) => {
-    const columnIdToUpdate = newColumnToUpdate.id;
+    const columnIdToUpdate = newColumnToUpdate._id;
     let newColumns = [...columns];
 
     const columnIndexToUpdate = newColumns.findIndex(
-      (column) => column.id === columnIdToUpdate
+      (column) => column._id === columnIdToUpdate
     );
 
     if (newColumnToUpdate._destroy) {
@@ -152,7 +149,7 @@ function BoardContent() {
 
     let newBoard = { ...board };
 
-    newBoard.columnOrder = newColumns.map((c) => c.id);
+    newBoard.columnOrder = newColumns.map((c) => c._id);
 
     newBoard.columns = newColumns;
 
